@@ -75,6 +75,12 @@ public class DemoController {
     public List<Livro> getLivrosDoAutor(@RequestParam(value = "autor") String autor){
         return livros.stream().filter(livro->livro.getAutor().equals(autor)).toList();
     }
+    
+    @GetMapping("/livroByAno")
+    @CrossOrigin(origins= "*")
+    public List<Livro> getLivroByAno(@RequestParam(value = "ano") Integer ano){
+        return livros.stream().filter(livro->livro.getAno().equals(ano)).toList();
+    }
 
     /****************Path parameters*******************/
     @GetMapping("/livrosautor/{autor}/ano/{ano}")
@@ -90,6 +96,13 @@ public class DemoController {
     @PostMapping("/novolivro")
     @CrossOrigin(origins= "*")
     public boolean adcLivroNovo(@RequestBody final Livro livro){
+        livros.add(livro);
+        return true;
+    }
+
+    @PostMapping("/setLivro")
+    @CrossOrigin(origins= "*")
+    public boolean setLivro(@RequestBody final Livro livro){
         livros.add(livro);
         return true;
     }
