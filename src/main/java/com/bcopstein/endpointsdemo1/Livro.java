@@ -29,10 +29,20 @@ public class Livro {
         return ano;
     }
 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public void setAno(Integer ano) {
+        this.ano = ano;
+    }
+
     @Override
     public String toString() {
         return "Livro " + id + ": " + titulo + ", " + autor + ", de " + ano;
-    }
-
-    
+    }    
 }

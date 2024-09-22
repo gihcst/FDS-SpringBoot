@@ -1,9 +1,6 @@
 package com.bcopstein.endpointsdemo1;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/biblioteca")
 public class DemoController {
-    private List<Livro> livros;
+    private Acervo acervo;
 
-    public DemoController() {
-        livros = new ArrayList<>();
-        livros.add(new Livro(1, "Crepúsculo", "Stephenie Meyer", 2005));
-        livros.add(new Livro(2, "Cidades de Papel", "John Green", 2015));
-        livros.add(new Livro(3, "Rainha Vermelha", "Victoria Aveyard", 2015));
+    public DemoController(Acervo acervo) {
+        this.acervo = acervo;
     }
 
     @GetMapping("")
@@ -37,7 +31,7 @@ public class DemoController {
     @GetMapping("/livros")
     @CrossOrigin(origins= "*")
     public List<Livro> getLivros(){   //livros impressos com a biblio JACKSON que serializa os objetos em JSON. (ignora o toString())
-        return livros;
+        return acervo.getAll();
     }
 
     /*public List<String> getLivros() {
@@ -50,22 +44,14 @@ public class DemoController {
 
     @GetMapping("/titulos")
     @CrossOrigin(origins= "*")
-    public String getTitulos() {
-        List<String> titulos = new ArrayList<String>();
-        for (Livro l : livros){
-            titulos.add(l.getTitulo());
-        }
-        return titulos.toString();
+    public List<Livro> getTitulos() {
+        return acervo.getAll();
     }
 
     @GetMapping("/autores")
     @CrossOrigin(origins= "*")
     public String getAutores() {
-        Set<String> autores = new HashSet<>(); //p nao ir repetidos usa-se um conjunto
-        for (Livro l : livros) {
-            autores.add(l.getAutor());
-        }
-        return autores.toString();
+        return acervo.getAutores();
     }
 
     /****************Query String*******************/
@@ -73,48 +59,61 @@ public class DemoController {
     @GetMapping("/livrosautor")
     @CrossOrigin(origins= "*")
     public List<Livro> getLivrosDoAutor(@RequestParam(value = "autor") String autor){
-        return livros.stream().filter(livro->livro.getAutor().equals(autor)).toList();
+        return acervo.getLivrosFromAutor(autor);    
     }
     
     @GetMapping("/livroByAno")
     @CrossOrigin(origins= "*")
     public List<Livro> getLivroByAno(@RequestParam(value = "ano") Integer ano){
-        return livros.stream().filter(livro->livro.getAno().equals(ano)).toList();
+        return acervo.getLivroByAno(ano); 
     }
 
     /****************Path parameters*******************/
     @GetMapping("/livrosautor/{autor}/ano/{ano}")
     @CrossOrigin(origins = "*")
     public List<Livro> getLivrosDoAutor(@PathVariable(value="autor") String autor, @PathVariable(value="ano") int ano){
-        return livros.stream()
-                     .filter(livro -> livro.getAutor().equals(autor))
-                     .filter(livro -> livro.getAno() == ano)
-                     .toList();
+        return acervo.getLivrosFromAutorByAno(autor, ano); 
+    }
+
+    @GetMapping("/outdated/ano/{ano}")
+    @CrossOrigin(origins = "*")
+    public List<Livro> getOutdated(@PathVariable(value="ano") int ano){
+        return acervo.getOutdated(ano);
     }
 
     /****************Request Body*******************/
     @PostMapping("/novolivro")
     @CrossOrigin(origins= "*")
-    public boolean adcLivroNovo(@RequestBody final Livro livro){
-        livros.add(livro);
-        return true;
-    }
-
-    @PostMapping("/setLivro")
-    @CrossOrigin(origins= "*")
-    public boolean setLivro(@RequestBody final Livro livro){
-        livros.add(livro);
-        return true;
+    public ResponseEntity<Boolean> adcLivroNovo(@RequestBody final Livro livro){
+        boolean adicionado = acervo.adcLivro(livro);
+        if (adicionado) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(true);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
     }
 
     /****************Response Entity*******************/
     @GetMapping("/getLivroByTitulo/{titulo}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Livro> getLivroTitulo(@PathVariable("titulo") String titulo){
-        Livro resp = livros.stream().filter(livro -> livro.getTitulo().equals(titulo)).findFirst().orElse(null);
+        Livro resp = acervo.getAll().stream().filter(livro -> livro.getTitulo().equals(titulo)).findFirst().orElse(null);
         if (resp == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(resp);
+    }
+    
+    @PostMapping("/setLivro/{id}")
+    @CrossOrigin(origins= "*")
+    public ResponseEntity<Boolean> setLivro(@PathVariable("id") int id, @RequestBody Livro livroSetado){
+        for (Livro l : acervo.getAll()) {
+            if (l.getId() == id) {
+                l.setTitulo(livroSetado.getTitulo());
+                l.setAutor(livroSetado.getAutor());
+                l.setAno(livroSetado.getAno());
+                return ResponseEntity.ok(true);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); 
     }
 }
