@@ -50,8 +50,14 @@ public class DemoController {
 
     @GetMapping("/autores")
     @CrossOrigin(origins= "*")
-    public String getAutores() {
+    public List<String> getAutores() {
         return acervo.getAutores();
+    }
+
+    @GetMapping("/averageOfBooks")
+    @CrossOrigin(origins= "*")
+    public Double averageBooks() {
+        return acervo.averageBooksFromAutor();
     }
 
     /****************Query String*******************/
@@ -59,13 +65,19 @@ public class DemoController {
     @GetMapping("/livrosautor")
     @CrossOrigin(origins= "*")
     public List<Livro> getLivrosDoAutor(@RequestParam(value = "autor") String autor){
-        return acervo.getLivrosFromAutor(autor);    
+        return acervo.getLivrosDoAutor(autor);    
     }
     
     @GetMapping("/livroByAno")
     @CrossOrigin(origins= "*")
     public List<Livro> getLivroByAno(@RequestParam(value = "ano") Integer ano){
         return acervo.getLivroByAno(ano); 
+    }
+
+    @GetMapping("/getRecent")
+    @CrossOrigin(origins= "*")
+    public int getRecentCount(@RequestParam(value = "ano") int ano){
+        return acervo.getRecent(ano);
     }
 
     /****************Path parameters*******************/
@@ -81,11 +93,17 @@ public class DemoController {
         return acervo.getOutdated(ano);
     }
 
+    @GetMapping("/nroDeObras/autor/{autor}")
+    @CrossOrigin(origins = "*")
+    public int getNroDeObras(@PathVariable(value="autor") String autor){
+        return acervo.getNumberOfBook(autor);
+    }
+
     /****************Request Body*******************/
     @PostMapping("/novolivro")
     @CrossOrigin(origins= "*")
     public ResponseEntity<Boolean> adcLivroNovo(@RequestBody final Livro livro){
-        boolean adicionado = acervo.adcLivro(livro);
+        boolean adicionado = acervo.cadastraLivroNovo(livro);
         if (adicionado) {
             return ResponseEntity.status(HttpStatus.CREATED).body(true);
         }
@@ -105,15 +123,12 @@ public class DemoController {
     
     @PostMapping("/setLivro/{id}")
     @CrossOrigin(origins= "*")
-    public ResponseEntity<Boolean> setLivro(@PathVariable("id") int id, @RequestBody Livro livroSetado){
-        for (Livro l : acervo.getAll()) {
-            if (l.getId() == id) {
-                l.setTitulo(livroSetado.getTitulo());
-                l.setAutor(livroSetado.getAutor());
-                l.setAno(livroSetado.getAno());
-                return ResponseEntity.ok(true);
-            }
+    public ResponseEntity<Boolean> setLivro(@PathVariable("id") int id, @RequestBody Livro livroSetado) {
+        boolean att = acervo.atualizarLivro(id, livroSetado);
+        if (att) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); 
     }
 }

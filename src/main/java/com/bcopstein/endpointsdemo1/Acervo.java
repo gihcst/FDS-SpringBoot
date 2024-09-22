@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class Acervo {
+@Repository
+public class Acervo implements IRepository{
     private List<Livro> livros;
     
     public Acervo(){
@@ -20,7 +20,7 @@ public class Acervo {
         livros.add(new Livro(5, "Pax", "Sara Pennypacker", 2016));
     }
 
-    public boolean adcLivro(Livro livro) {
+    public boolean cadastraLivroNovo(Livro livro) {
         return livros.add(livro);
     }
 
@@ -32,15 +32,15 @@ public class Acervo {
         return livros.stream().map(livro->livro.getTitulo()).toList();
     }
 
-    public String getAutores(){
-        Set<String> autores = new HashSet<>();
-        for (Livro l : livros) {
-            autores.add(l.getAutor());
-        }
-        return autores.toString();
+    public List<String> getAutores() {
+    Set<String> autores = new HashSet<>();
+    for (Livro l : livros) {
+        autores.add(l.getAutor()); 
     }
+    return new LinkedList<>(autores); 
+}
 
-    public List<Livro> getLivrosFromAutor(String autor){
+    public List<Livro> getLivrosDoAutor(String autor){
         return livros.stream().filter(livro->livro.getAutor().equals(autor)).toList();
     }
 
@@ -54,5 +54,41 @@ public class Acervo {
 
     public List<Livro> getOutdated(int ano){
         return livros.stream().filter(livro -> livro.getAno() < ano).toList();
+    }
+
+    public int getNumberOfBook(String autor){
+        return getLivrosDoAutor(autor).size();
+    }
+
+    public int getRecent(int ano){
+        return (int) livros.stream().filter(livro -> livro.getAno() > ano).count();
+    }
+
+    public double averageBooksFromAutor() {
+        long nroAutores = livros.stream().map(Livro::getAutor).distinct().count();
+        if (nroAutores == 0) {
+            return 0.0;  
+        }
+        return (double) livros.size() / nroAutores;
+    }
+
+    public boolean removeLivro(int id) {
+        return livros.removeIf(livro -> livro.getId() == id);
+    }
+    
+    public Livro getLivroTitulo(String titulo) {
+        return livros.stream().filter(livro -> livro.getTitulo().equals(titulo)).findFirst().orElse(null); 
+    }
+
+    public boolean atualizarLivro(int id, Livro livroSetado) {
+        for (Livro l : livros) {
+            if (l.getId() == id) {
+                l.setTitulo(livroSetado.getTitulo());
+                l.setAutor(livroSetado.getAutor());
+                l.setAno(livroSetado.getAno());
+                return true; 
+            }
+        }
+        return false;
     }
 }
