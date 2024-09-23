@@ -14,4 +14,10 @@ public interface IRepositoryAcervo {
     boolean updateBook(int id, Livro livro);
     boolean lendBook(String titulo, int id);
     boolean returnBook(int id);
+    Double averageBooksFromAuthors();
+    List<Livro> getBookbyYear(Integer ano);
+    int getRecent(int ano);
+    List<Livro> getBooksFromAuthorByYear(String autor, int ano);
+    List<Livro> getOutdated(int ano);
+    int getNumberOfBook(String autor);
 }

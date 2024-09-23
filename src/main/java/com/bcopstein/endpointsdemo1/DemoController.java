@@ -222,4 +222,9 @@ public class DemoController {
         return false;
     }
 
+    @PutMapping("/devolucao/{id}")
+    public boolean devolveLivro(@PathVariable("id") int id){
+        
+    }
+
 }

@@ -132,7 +132,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      * @return A média de livros por autor, ou 0.0 se não houver autores.
      */
     @SuppressWarnings("null")
-    public double averageBooksFromAuthors() {
+    public Double averageBooksFromAuthors() {
         Integer totalLivros = this.jdbcTemplate.queryForObject("SELECT COUNT(*) FROM livros", Integer.class);
         Integer nroAutores = this.jdbcTemplate.queryForObject("SELECT COUNT(DISTINCT autor) FROM livros", Integer.class);
 
