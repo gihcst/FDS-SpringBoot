@@ -224,7 +224,8 @@ public class DemoController {
 
     @PutMapping("/devolucao/{id}")
     public boolean devolveLivro(@PathVariable("id") int id){
-        
+        acervo.returnBook(id);
+        return true;
     }
 
 }

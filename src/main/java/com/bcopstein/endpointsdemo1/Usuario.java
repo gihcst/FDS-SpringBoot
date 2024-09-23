@@ -6,8 +6,8 @@ public class Usuario {
     private int anoDeNascimento;
 
     public Usuario(String nome, int codigo, int anoDeNascimento) {
-        this.codigo = codigo;
         this.nome = nome;
+        this.codigo = codigo;
         this.anoDeNascimento = anoDeNascimento;
     }
 

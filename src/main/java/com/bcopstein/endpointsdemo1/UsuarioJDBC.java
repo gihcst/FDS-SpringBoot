@@ -18,7 +18,7 @@ public class UsuarioJDBC implements IRepositoryUsuario {
             (rs, rowId) ->
                 new Usuario(rs.getString("name"),
                 rs.getInt("codigo"),
-                rs.getInt("anoDeNascimento")));
+                rs.getInt("anoDeNascimento")), codigo);
     }
 
     @Override
