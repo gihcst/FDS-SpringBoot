@@ -161,8 +161,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public Livro getBookTitle(String titulo) {
         return this.jdbcTemplate.queryForObject("SELECT * FROM livros WHERE titulo = ?", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), 
-            titulo);
+        (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), titulo);
     }
 
     /**
@@ -173,8 +172,17 @@ public class AcervoJDBC implements IRepositoryAcervo {
      * @return true se a atualização for bem-sucedida.
      */
     public boolean updateBook(int id, Livro livroSetado) {
-        this.jdbcTemplate.update("UPDATE livros SET titulo = ?, autor = ?, ano = ? WHERE id_livro = ?", 
-            livroSetado.getTitulo(), livroSetado.getAutor(), livroSetado.getAno(), id);
+        this.jdbcTemplate.update("UPDATE livros SET titulo = ?, autor = ?, ano = ? WHERE id_livro = ?", livroSetado.getTitulo(), livroSetado.getAutor(), livroSetado.getAno(), id);
         return true;
+    }
+
+    public boolean lendBook(String titulo, int codigoUser){
+        int linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = ? WHERE titulo = ?", codigoUser, titulo);
+        return linhas > 0;
+    }
+
+    public boolean returnBook(int id){
+        int linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = -1 WHERE id_livro = ?", id);
+        return linhas > 0;
     }
 }

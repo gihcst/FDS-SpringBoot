@@ -23,10 +23,8 @@ public class UsuarioJDBC implements IRepositoryUsuario {
 
     @Override
     public boolean registerNewUser(Usuario usuario) {
-        return this.jdbcTemplate.update(
-            "INSERT INTO usuario(codigo, nome, anoNasc) VALUES (?,?,?)",
-            usuario.getCodigo(), usuario.getNome(), usuario.getAnoDeNascimento()
-        ) > 0;
+        return this.jdbcTemplate.update("INSERT INTO usuario(codigo, nome, anoDeNascimento) VALUES (?,?,?)",
+            usuario.getCodigo(), usuario.getNome(), usuario.getAnoDeNascimento()) > 0;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class UsuarioJDBC implements IRepositoryUsuario {
             (rs, rowNum) -> new Usuario(
                 rs.getString("nome"),
                 rs.getInt("codigo"),
-                rs.getInt("anoNasc")
+                rs.getInt("anoDeNascimento")
             )
         );
     }

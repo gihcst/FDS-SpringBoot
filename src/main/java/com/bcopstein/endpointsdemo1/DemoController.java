@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/biblioteca")
 public class DemoController {
-    private AcervoJDBC acervo;
+    private IRepositoryAcervo acervo;
+    private IRepositoryUsuario usuario;
 
     // Construtor que recebe uma instância de Acervo injetada
-    public DemoController(AcervoJDBC acervo) {
+    public DemoController(IRepositoryAcervo acervo, IRepositoryUsuario usuario) {
         this.acervo = acervo;
+        this.usuario = usuario;
     }
 
     /**
@@ -208,4 +211,15 @@ public class DemoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @PutMapping("/emprestimos/{titulo}/{user}")
+    public boolean emprestaLivro(@PathVariable("titulo") String titulo, @PathVariable("user") int userID){
+        Usuario user = usuario.getUser(userID);
+        if(user != null){
+            acervo.lendBook(titulo, userID);
+            return true;
+        }
+        return false;
+    }
+
 }

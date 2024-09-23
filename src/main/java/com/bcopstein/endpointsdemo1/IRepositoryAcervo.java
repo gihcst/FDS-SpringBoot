@@ -12,4 +12,6 @@ public interface IRepositoryAcervo {
     boolean registerNewBook(Livro livro);
     boolean removeBook(int id);
     boolean updateBook(int id, Livro livro);
+    boolean lendBook(String titulo, int id);
+    boolean returnBook(int id);
 }
