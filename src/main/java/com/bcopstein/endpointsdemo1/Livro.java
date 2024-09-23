@@ -5,7 +5,7 @@ public class Livro {
     private String titulo; // Título do livro
     private String autor; // Autor do livro
     private Integer ano; // Ano de publicação do livro
-    private int codigoUser;
+    private int codigoUser; // Código do usúario que pegou o livro emprestado
 
     /**
      * Construtor da classe Livro.
@@ -14,6 +14,7 @@ public class Livro {
      * @param titulo Título do livro.
      * @param autor Autor do livro.
      * @param ano Ano de publicação.
+     * @param codigoUser Código do usúario que pegou o livro emprestado
      */
     public Livro(Integer id, String titulo, String autor, Integer ano, int codigoUser) {
         this.id = id;

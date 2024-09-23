@@ -1,7 +1,6 @@
 package com.bcopstein.endpointsdemo1;
 
 import java.util.List;
-
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Repository;
 @Primary
 public class AcervoJDBC implements IRepositoryAcervo {
     private JdbcTemplate jdbcTemplate;
+    private int linhas = 0;
 
     // Construtor que recebe um JdbcTemplate injetado
     public AcervoJDBC(JdbcTemplate jdbcTemplate) {
@@ -176,14 +176,49 @@ public class AcervoJDBC implements IRepositoryAcervo {
         return true;
     }
 
-    public boolean lendBook(int id_livro, int codigoUser){
-        int rowsAffected = this.jdbcTemplate.update("UPDATE livros SET codigoUser = ? WHERE id_livro = ?",
+    /**
+     * Realiza o empréstimo de um livro para um usuário.
+     * 
+     * @param id_livro O ID do livro a ser emprestado.
+     * @param codigoUser O código do usuário que está emprestando o livro.
+     * @return true se o empréstimo for bem-sucedido.
+     */
+    public boolean lendBook(int id_livro, int codigoUser) {
+        linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = ? WHERE id_livro = ?",
             codigoUser, id_livro);
-        return rowsAffected > 0;
+        return linhas > 0;
     }
 
-    public boolean returnBook(int id){
-        int linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = -1 WHERE id_livro = ?", id);
+    /**
+     * Realiza a devolução de um livro.
+     * 
+     * @param id O ID do livro a ser devolvido.
+     * @return true se a devolução for bem-sucedida.
+     */
+    public boolean returnBook(int id) {
+        linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = -1 WHERE id_livro = ?", id);
         return linhas > 0;
+    }
+
+    /**
+     * Lista todos os livros que estão atualmente emprestados.
+     * 
+     * @return Lista de objetos Livro que estão emprestados.
+     */
+    public List<Livro> listLendBooks(int codigoUser) {
+        List<Livro> resp = this.jdbcTemplate.query("SELECT * FROM livros WHERE codigoUser = ?", 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), codigoUser);
+        return resp;
+    }
+
+    /**
+     * Lista todos os livros que estão disponíveis na biblioteca.
+     * 
+     * @return Lista de objetos Livro que estão livres.
+     */
+    public List<Livro> listFreeBooks() {
+        List<Livro> resp = this.jdbcTemplate.query("SELECT * FROM livros WHERE codigoUser = -1", 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")));
+        return resp;
     }
 }

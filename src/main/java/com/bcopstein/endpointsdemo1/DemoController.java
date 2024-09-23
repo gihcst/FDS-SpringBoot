@@ -15,13 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlador para gerenciar a biblioteca.
+ * 
+ * Esta classe define endpoints para interagir com a biblioteca,
+ * permitindo operações de leitura e escrita em um acervo de livros
+ * e usuários.
+ */
 @RestController
 @RequestMapping("/biblioteca")
 public class DemoController {
     private IRepositoryAcervo acervo;
     private IRepositoryUsuario usuario;
 
-    // Construtor que recebe uma instância de Acervo injetada
+    /**
+     * Construtor que recebe instâncias de Acervo e Usuário injetadas.
+     * 
+     * @param acervo Repositório para gerenciar livros na biblioteca.
+     * @param usuario Repositório para gerenciar usuários da biblioteca.
+     */
     @Autowired
     public DemoController(IRepositoryAcervo acervo, IRepositoryUsuario usuario) {
         this.acervo = acervo;
@@ -214,27 +226,63 @@ public class DemoController {
         }
     }
 
-    @GetMapping("emprestaLivro/{titulo}/{codigoUsuario}")
+    /**
+     * Realiza o empréstimo de um livro para um usuário.
+     * 
+     * @param titulo O título do livro a ser emprestado.
+     * @param codigoUser O código do usuário que está pegando o livro.
+     * @return Resposta com status de sucesso ou 404 se não encontrado.
+     */
+    @GetMapping("pegaLivroEmprestado/{titulo}/{codigoUser}")
     @CrossOrigin(origins = "*")
-    public String emprestaLivro(@PathVariable(value = "titulo") String titulo, @PathVariable(value = "codigoUsuario") int codigoUsuario) {
+    public ResponseEntity<Boolean> livroEmprestado(@PathVariable(value = "titulo") String titulo, @PathVariable(value = "codigoUser") int codigoUser) {
         Livro livro = acervo.getBookTitle(titulo);
-        Usuario user = usuario.getUser(codigoUsuario);
-        if (livro != null && livro.getCodigoUser() == -1){
+        Usuario user = usuario.getUser(codigoUser);
+        if (livro.getCodigoUser() == -1){
             if (user != null){
                 acervo.lendBook(livro.getId(), user.getCodigo());
-                return "Livro emprestado com sucesso :)";
+                return ResponseEntity.ok(true);
             } else {
-                return "Usuário não cadastrado";
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } else {
-            return "Livro Indisponível!";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @PutMapping("/devolucao/{id}")
+    /**
+     * Realiza a devolução de um livro pelo seu ID.
+     * 
+     * @param id O ID do livro a ser devolvido.
+     * @return true se a devolução for bem-sucedida.
+     */
+    @PutMapping("/devolveLivro/{id}")
+    @CrossOrigin(origins = "*")
     public boolean devolveLivro(@PathVariable("id") int id){
         acervo.returnBook(id);
         return true;
     }
 
+    /**
+     * Lista todos os livros que estão emprestados à um usuário.
+     * 
+     * @param codigoUser código do usuário para ver quais livros estão emprestados à ele
+     * @return Lista de objetos Livro que estão emprestados.
+     */
+    @GetMapping("/listarLivrosEmprestados/{codigoUser}")
+    @CrossOrigin(origins = "*")
+    public List<Livro> listarLivrosEmprestados(@PathVariable("codigoUser") int codigoUser){
+        return acervo.listLendBooks(codigoUser);
+    }
+
+    /**
+     * Lista todos os livros que estão disponíveis na biblioteca.
+     * 
+     * @return Lista de objetos Livro que estão livres.
+     */
+    @GetMapping("/listarLivrosLivres")
+    @CrossOrigin(origins = "*")
+    public List<Livro> listarLivrosLivres(){
+        return acervo.listFreeBooks();
+    }
 }

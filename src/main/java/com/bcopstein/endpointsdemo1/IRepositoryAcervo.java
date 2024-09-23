@@ -20,4 +20,6 @@ public interface IRepositoryAcervo {
     List<Livro> getBooksFromAuthorByYear(String autor, int ano);
     List<Livro> getOutdated(int ano);
     int getNumberOfBook(String autor);
+    List<Livro> listLendBooks(int codigoUser);
+    List<Livro> listFreeBooks();
 }

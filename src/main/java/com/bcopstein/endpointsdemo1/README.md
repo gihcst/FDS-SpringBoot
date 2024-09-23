@@ -30,6 +30,7 @@ Este projeto é um programa que gerencia uma biblioteca, utilizando Spring Boot 
      - `getAll()`: Consulta todos os livros no banco de dados.
      - `averageBooksFromAuthors()`: Calcula a média de livros por autor.
      - `getBookTitle(String titulo)`: Busca um livro pelo título.
+     - Outros métodos para obter livros por ano, autor, ou verificar disponibilidade.
 
 4. **`DemoController`**
    - Controlador REST que expõe endpoints para interagir com a API.
@@ -38,8 +39,35 @@ Este projeto é um programa que gerencia uma biblioteca, utilizando Spring Boot 
      - `POST /biblioteca/novolivro`: Adiciona um novo livro.
      - `GET /biblioteca/livrosAutor?autor=NomeDoAutor`: Retorna livros de um autor específico.
      - `GET /biblioteca/getLivroPorTitulo/{titulo}`: Retorna um livro pelo título.
+     - `GET /biblioteca/livrosEmprestados`: Retorna todos os livros emprestados.
+     - `GET /biblioteca/livrosDisponiveis`: Retorna todos os livros disponíveis.
 
-5. **`Endpointsdemo1Application`**
+5. **`Usuario`**
+   - Representa um usuário com atributos como nome, código e ano de nascimento.
+   - Métodos:
+     - `getNome()`: Retorna o nome do usuário.
+     - `getCodigo()`: Retorna o código do usuário.
+     - `getAnoDeNascimento()`: Retorna o ano de nascimento do usuário.
+     - Métodos setter para modificar os atributos.
+     - `toString()`: Retorna uma representação formatada do usuário.
+
+6. **`IRepositoryUsuario`**
+   - Interface que define métodos para operações de acesso a dados relacionadas a usuários.
+   - Métodos principais incluem:
+     - `getUser(int codigo)`: Retorna um usuário pelo código.
+     - `registerNewUser(Usuario usuario)`: Adiciona um novo usuário.
+     - `removeUser(int codigo)`: Remove um usuário pelo código.
+     - `getAllUsers()`: Retorna todos os usuários.
+
+7. **`UsuarioJDBC`**
+   - Implementação da interface `IRepositoryUsuario`, utilizando `JdbcTemplate` para interagir com o banco de dados.
+   - Métodos incluem:
+     - `getUser(int codigo)`: Busca um usuário pelo código.
+     - `registerNewUser(Usuario usuario)`: Adiciona um novo usuário ao banco de dados.
+     - `removeUser(int codigo)`: Remove um usuário pelo código.
+     - `getAllUsers()`: Retorna todos os usuários cadastrados.
+
+8. **`Endpointsdemo1Application`**
    - Classe principal que inicia a aplicação Spring Boot.
 
 ## Dependências
