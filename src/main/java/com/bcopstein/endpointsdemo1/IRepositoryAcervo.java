@@ -12,7 +12,7 @@ public interface IRepositoryAcervo {
     boolean registerNewBook(Livro livro);
     boolean removeBook(int id);
     boolean updateBook(int id, Livro livro);
-    boolean lendBook(String titulo, int id);
+    boolean lendBook(int id_livro, int id);
     boolean returnBook(int id);
     Double averageBooksFromAuthors();
     List<Livro> getBookbyYear(Integer ano);

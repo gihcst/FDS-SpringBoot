@@ -2,6 +2,7 @@ package com.bcopstein.endpointsdemo1;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ public class DemoController {
     private IRepositoryUsuario usuario;
 
     // Construtor que recebe uma instância de Acervo injetada
+    @Autowired
     public DemoController(IRepositoryAcervo acervo, IRepositoryUsuario usuario) {
         this.acervo = acervo;
         this.usuario = usuario;
@@ -212,14 +214,21 @@ public class DemoController {
         }
     }
 
-    @PutMapping("/emprestimos/{titulo}/{user}")
-    public boolean emprestaLivro(@PathVariable("titulo") String titulo, @PathVariable("user") int userID){
-        Usuario user = usuario.getUser(userID);
-        if(user != null){
-            acervo.lendBook(titulo, userID);
-            return true;
+    @GetMapping("emprestaLivro/{titulo}/{codigoUsuario}")
+    @CrossOrigin(origins = "*")
+    public String emprestaLivro(@PathVariable(value = "titulo") String titulo, @PathVariable(value = "codigoUsuario") int codigoUsuario) {
+        Livro livro = acervo.getBookTitle(titulo);
+        Usuario user = usuario.getUser(codigoUsuario);
+        if (livro != null && livro.getCodigoUser() == -1){
+            if (user != null){
+                acervo.lendBook(livro.getId(), user.getCodigo());
+                return "Livro emprestado com sucesso :)";
+            } else {
+                return "Usuário não cadastrado";
+            }
+        } else {
+            return "Livro Indisponível!";
         }
-        return false;
     }
 
     @PutMapping("/devolucao/{id}")

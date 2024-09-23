@@ -35,7 +35,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public List<Livro> getAll() {
         List<Livro> resp = this.jdbcTemplate.query("SELECT * from livros", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")));
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")));
         return resp;
     }
 
@@ -65,7 +65,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public List<Livro> getAuthorsbooks(String autor) {
         return this.jdbcTemplate.query("SELECT * FROM livros WHERE autor = ?", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), 
             autor);
     }
 
@@ -77,7 +77,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public List<Livro> getBookbyYear(Integer ano) {
         return this.jdbcTemplate.query("SELECT * FROM livros WHERE ano = ?", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), 
             ano);
     }
 
@@ -90,7 +90,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public List<Livro> getBooksFromAuthorByYear(String autor, int ano) {
         return this.jdbcTemplate.query("SELECT * FROM livros WHERE autor = ? AND ano = ?", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), 
             autor, ano);
     }
 
@@ -102,7 +102,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public List<Livro> getOutdated(int ano) {
         return this.jdbcTemplate.query("SELECT * FROM livros WHERE ano < ?", 
-            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), 
+            (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), 
             ano);
     }
 
@@ -161,7 +161,7 @@ public class AcervoJDBC implements IRepositoryAcervo {
      */
     public Livro getBookTitle(String titulo) {
         return this.jdbcTemplate.queryForObject("SELECT * FROM livros WHERE titulo = ?", 
-        (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano")), titulo);
+        (rs, rowNum) -> new Livro(rs.getInt("id_livro"), rs.getString("titulo"), rs.getString("autor"), rs.getInt("ano"), rs.getInt("codigoUser")), titulo);
     }
 
     /**
@@ -176,9 +176,10 @@ public class AcervoJDBC implements IRepositoryAcervo {
         return true;
     }
 
-    public boolean lendBook(String titulo, int codigoUser){
-        int linhas = this.jdbcTemplate.update("UPDATE livros SET codigoUser = ? WHERE titulo = ?", codigoUser, titulo);
-        return linhas > 0;
+    public boolean lendBook(int id_livro, int codigoUser){
+        int rowsAffected = this.jdbcTemplate.update("UPDATE livros SET codigoUser = ? WHERE id_livro = ?",
+            codigoUser, id_livro);
+        return rowsAffected > 0;
     }
 
     public boolean returnBook(int id){

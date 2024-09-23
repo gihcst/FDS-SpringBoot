@@ -16,9 +16,9 @@ public class UsuarioJDBC implements IRepositoryUsuario {
     public Usuario getUser(int codigo) {
         return this.jdbcTemplate.queryForObject("SELECT * FROM usuario WHERE codigo = ?",
             (rs, rowId) ->
-                new Usuario(rs.getString("name"),
+                new Usuario(rs.getString("nome"),
                 rs.getInt("codigo"),
-                rs.getInt("anoDeNascimento")), codigo);
+                rs.getInt("anodenascimento")), codigo);
     }
 
     @Override

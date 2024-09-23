@@ -39,4 +39,9 @@ public class Usuario {
     public String toString() {
         return "Usuario [nome=" + nome + ", codigo=" + codigo + ", anoDeNascimento=" + anoDeNascimento + "]";
     }
+
+    public Usuario getUser(int codigoUsuario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
+    }
 }

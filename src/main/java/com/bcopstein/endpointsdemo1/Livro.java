@@ -5,6 +5,7 @@ public class Livro {
     private String titulo; // Título do livro
     private String autor; // Autor do livro
     private Integer ano; // Ano de publicação do livro
+    private int codigoUser;
 
     /**
      * Construtor da classe Livro.
@@ -14,11 +15,12 @@ public class Livro {
      * @param autor Autor do livro.
      * @param ano Ano de publicação.
      */
-    public Livro(Integer id, String titulo, String autor, Integer ano) {
+    public Livro(Integer id, String titulo, String autor, Integer ano, int codigoUser) {
         this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.ano = ano;
+        this.codigoUser = codigoUser;
     }
 
     // Métodos getter para acessar os atributos privados
@@ -38,6 +40,10 @@ public class Livro {
         return ano;
     }
 
+    public int getCodigoUser(){
+        return codigoUser;
+    }
+
     // Métodos setter para modificar os atributos privados
     public void setTitulo(String titulo) {
         this.titulo = titulo;
@@ -49,6 +55,10 @@ public class Livro {
 
     public void setAno(Integer ano) {
         this.ano = ano;
+    }
+    
+    public void setCodigoUser(int codigoUser) {
+        this.codigoUser = codigoUser;
     }
 
     /**
